@@ -205,9 +205,32 @@ Siendo una página web  y un servidor que no es tan potente al realizar 11,000, 
 
 
 
-## 
+## Archivo de configuración
 
-## 
+Para saber que  
+
+## Funcionamiento del programa
+
+```mermaid
+graph TD;
+A[Inicio programa] -->|*b1| B;
+B{existe  configuracion?} -->|no| C([Crea la configuracion])
+B--> H[*b2]
+	
+
+
+subgraph crear Configuracion
+	C--> D[cuenta el numero de json de profesores]
+	D--> E{existe la base de datos}
+	E--> |si| f1[regresa *b1]
+	E--> |no| F[crea la base de datos]
+	F--> G[crea tabla profesores]
+	G-->E
+	end;
+
+```
+
+
 
 # Resultado
 
