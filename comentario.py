@@ -38,10 +38,20 @@ class Comentario:
             comments=source['comments']
         )
 
+
 listaComentarios:List[Comentario]
 
 
 def scrappingProfesor_SoloUnaPag(url:str,numPagActual:int)->List[Comentario]:
+    """Realiza el scraping a una pagina dada de mis profesores.com para obtener los comentarios (sólo a una)
+
+    Args:
+        url (str): Url a la que se le realiza la extraccion de comentarios  
+        numPagActual (int): Si la página tiene varias paginas paginas de comentarios (1,2,3,4) entonces se pasa este numero
+
+    Returns:
+        List[Comentario]: Lista con los comentarios obtenidos
+    """
     listaComentarios:List[Comentario]=[]
 
     print("pagina actual: " + str(numPagActual))
@@ -129,44 +139,16 @@ def main():
     url = "https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150"
     scrappingProfesor(url)
 
-#main()
 
-def indice():
-    from bs4 import BeautifulSoup
 
-    html = '''
-    <nav style="text-align:center;">
-    <ul class="pagination" style="margin-top:0px;">
-        <li class="disabled">
-        <a aria-label="Anterior">
-            <span aria-hidden="true">«</span>
-        </a>
-        </li>
-            <li class="active"><a "="">1</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=2" "="">2</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=3" "="">3</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=4" "="">4</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=5" "="">5</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=6" "="">6</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=7" "="">7</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=8" "="">8</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=9" "="">9</a></li>
-            <li><a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=10" "="">10</a></li>
-            
-        <li>
-        <a href="https://www.misprofesores.com/profesores/nuestro-precidente--AMLO-2018_98150?pag=2" aria-label="Siguiente">
-            <span aria-hidden="true">»</span>
-        </a>
-        </li>
-    </ul>
-    </nav>
-    '''
-
-    soup = BeautifulSoup(html, 'html.parser')
-    last_element = soup.find_all('li')[-2].text.strip()
-    print(last_element)
 
 def listaComentarios_To_JSON(nombreJSON:str,listaComentarios:List[Comentario]):
+    """ Genera un archivo con los comentarios guardados  de ciertos
+
+    Args:
+        nombreJSON (str): _description_
+        listaComentarios (List[Comentario]): _description_
+    """
 
     # Convierte la lista de objetos Comentario en una lista de diccionarios
     listaComentarios_dict = [comentario.to_dict() for comentario in listaComentarios]
@@ -178,7 +160,16 @@ def listaComentarios_To_JSON(nombreJSON:str,listaComentarios:List[Comentario]):
     with open(nombreJSON, 'w', encoding='utf8') as f:
         f.write(listaComentarios_json)
 
-def json_To_ListaComentarios(nombreJSON:str):
+
+def json_To_ListaComentarios(nombreJSON:str)->List[Comentario]:
+    """Convierte de un diccionario Json a la lista comentarios, recordar que un archivo json es un archivo con los comentarios de un profesor
+
+    Args:
+        nombreJSON (str): ruta/archivo.json
+
+    Returns:
+        List[Comentario]: lista con los comentarios
+    """
 
     # Carga el archivo JSON como una lista de diccionarios
     with open(nombreJSON, 'r', encoding='utf8') as f:
@@ -189,10 +180,18 @@ def json_To_ListaComentarios(nombreJSON:str):
     return listaComentarios
 
 
-def ExtraerNombres_links_profes(nombre_archivo):
+def ExtraerNombres_links_profes(nombre_archivo:str)->tuple[list[str], list[str]]:
+    """Extra los nombres de profesores y links del archivo profesores.txt
+
+    Args:
+        nombre_archivo (str): profesores.txt
+
+    Returns:
+        tuple[list[str], list[str]]: lista[lista_textp],lista[lista_links]
+    """
     # Primero, inicializamos las listas vacías
-    lista_texto = []
-    lista_links = []
+    lista_texto:list[str] = []
+    lista_links:list[str] = []
 
     # Abrimos el archivo y leemos línea por línea
     with open(nombre_archivo, 'r', encoding='utf-8') as f:
@@ -226,7 +225,7 @@ def main2():
 
     print(url)
 
-    crear_base_datos_y_tabla()
+    #crear_base_datos_y_tabla()
 
 
 

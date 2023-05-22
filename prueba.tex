@@ -1,0 +1,16 @@
+\documentclass{article}
+\usepackage{tikz}
+
+\begin{document}
+ne
+\begin{tikzpicture}
+    % Bloque decoder (verde)
+    \node [draw, fill=green!30, minimum width=2cm, minimum height=1cm] (decoder) at (0,0) {Decoder};
+    
+    % Bloque encoder (rojo)
+    \node [draw, fill=red!30, minimum width=2cm, minimum height=1cm] (encoder) at (-3,0) {Encoder};
+    
+    % Línea que conecta el decoder al encoder
+    \draw [->] (decoder.west) -- (encoder.east);
+\end{tikzpicture}
+\end{document}
