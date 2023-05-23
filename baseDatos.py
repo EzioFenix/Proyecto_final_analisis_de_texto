@@ -9,7 +9,7 @@ class BaseDatos():
         self.conexion = sqlite3.connect(nombreArchivo)
 
 
-    def crear_base_datos_y_tabla(self,nombreArchivo:str)->bool:
+    def crear_base_datos_y_tabla(self)->bool:
         """Crea la base de datos, la tabla y la indexiación en nombreProfesor
 
         Args:
@@ -19,7 +19,7 @@ class BaseDatos():
             bool: True== exito en crear la base datos
         """
         try:
-            conexion = sqlite3.connect(nombreArchivo)
+            conexion = sqlite3.connect(self.nombreArchivo)
             cursor = conexion.cursor()
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS diaActualizacion (

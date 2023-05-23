@@ -1,5 +1,11 @@
 {
-    "numMaxProfesores": 0,
-    "numArchivosJson": 0,
-    "estadoBase": true
+    "archivo_config": "config.json",
+    "archivo_db": "registro_Scraping.db",
+    "carpetaComentarios": "comentarios_profesor",
+    "archivoProfesores": "profesores.txt",
+    "carpetaGuardadoJSON": "comentarios_profesores",
+    "numMaxProfesores": 2036,
+    "numArchivosJson": 4,
+    "estadoBase": true,
+    "numMaxprofesores": 2036
 }

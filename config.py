@@ -6,7 +6,10 @@ class Config():
     def __init__(self) -> None:
         self.archivo_config = "config.json"
         self.archivo_db="registro_Scraping.db"
-        self.numMaxProfesores:int=0
+        self.carpetaComentarios="comentarios_profesor"
+        self.archivoProfesores="profesores.txt"
+        self.carpetaGuardadoJSON="comentarios_profesores"
+        self.numMaxProfesores:int=2036
         self.numArchivosJson:int=0
         self.estadoBase:bool=False #true 
 
@@ -14,23 +17,19 @@ class Config():
     def leer_configuracion(self):
         with open(self.archivo_config, 'r') as json_file:
             data = json.load(json_file)
-            self.numMaxProfesores = data.get('numMaxProfesores')
-            self.numArchivosJson = data.get('numArchivosJson')
-            self.estadoBase = data.get('estadoBase')
+            for key, value in data.items():
+                setattr(self, key, value)
 
 
     def guardar_configuracion(self):
-        data = {
-            'numMaxProfesores': self.numMaxProfesores,
-            'numArchivosJson': self.numArchivosJson,
-            'estadoBase': self.estadoBase
-        }
+        data = {attr: getattr(self, attr) for attr in self.__dict__ if not attr.startswith("__") and not callable(getattr(self, attr))}
         with open(self.archivo_config, 'w') as json_file:
             json.dump(data, json_file, indent=4)
 
 
+
     def contar_carpeta_comentarios(self)->int:
-        carpeta = "comentarios-porProfe"
+        carpeta = self.carpetaComentarios
 
         if not os.path.exists(carpeta):
             os.makedirs(carpeta)
