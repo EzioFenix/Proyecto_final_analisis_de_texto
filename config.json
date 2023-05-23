@@ -5,7 +5,7 @@
     "archivoProfesores": "profesores.txt",
     "carpetaGuardadoJSON": "comentarios_profesores",
     "numMaxProfesores": 2036,
-    "numArchivosJson": 4,
+    "numArchivosJson": 6,
     "estadoBase": true,
     "numMaxprofesores": 2036
 }
