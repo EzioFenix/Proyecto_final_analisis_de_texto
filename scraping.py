@@ -1,4 +1,6 @@
 import os
+import re
+import time
 import requests
 import json
 import string
@@ -33,6 +35,9 @@ class Scraping():
         
 
     def nombreToJSon(self):
+        """Convierte el nombre de guardado del archivo a ruta completa
+        ejemplo: hola ==> carpeta/hola.json
+        """
         carpeta=self.carpetaGuardadoJSON
         nombreNormalizado= self.reemplazar_puntuacion(self.nombreProfesor) + ".json"
         
@@ -40,10 +45,21 @@ class Scraping():
     
     
     def scrapear(self):
+        print(self.nombreProfesor)
         self.nombreToJSon() # Determinamos los nombres de base de datos y ruta
-        self.scrappingProfesor()
-        return True
+        if (self.scrappingProfesor())==True:
+            self.listaComentarios_To_JSON()
+            return True
+        else:
+            return False
+        
 
+
+    def calcularNumeroPags(self):
+        """Calcula el numero de paginas de acuerdo con el numero de comentarios totales , son 5 comentarios por pagina
+        """
+        numero=self.numComentarios
+        self.numPags=numero//5 +int(numero % 5 > 0)
 
 
     def scrappingProfesor_SoloUnaPag(self,url:str,numPagActual:int)->List[Comentario]:
@@ -75,9 +91,8 @@ class Scraping():
                 # Recorrer las celdas de cada fila
 
                 fecha = fila.find('div', class_='date').text.strip()
-                score_malo = fila.find_all('span', class_='score')[0].text.strip()
-                score_regular = fila.find_all('span', class_='score')[1].text.strip()
-                scoreTotal= int((float(score_malo)+float(score_regular))/2)
+                calidad_general = fila.find_all('span', class_='score')[0].text.strip()
+                facilidad = fila.find_all('span', class_='score')[1].text.strip()
                 materia = fila.find('span', class_='name').text.strip()
                 textos_unidos:str
                 comments = fila.find('p', class_='commentsParagraph')
@@ -95,12 +110,11 @@ class Scraping():
                 if comments:
                     textos_unidos+= soup.find('p', class_='commentsParagraph').text.strip()
 
-                nuevoComentario=Comentario(fecha,score_malo,score_regular,materia,textos_unidos)
+                nuevoComentario=Comentario(fecha,calidad_general,facilidad,materia,textos_unidos)
                 listaComentarios.append(nuevoComentario)
                 
                 # comprobar  que esta recolentando data--------------
                 #print("Fecha:", fecha)
-                #print("Score total:", scoreTotal)
                 #print("Materia:", materia)
                 #print("Comentario:", textos_unidos)
                 #print('---')
@@ -125,19 +139,38 @@ class Scraping():
 
         # Buscar la tabla por su clase CSS
         # -2  es poruqe el final es una vacia en li
-        self.numPags = int(soup.find_all('li')[-2].text.strip())
+        #self.numPags = int(soup.find_all('li')[-2].text.strip()) #metodo con errores
 
-        # scraping a las paginas--------------------------------
+        #div = soup.find('div', class_='table-toggle rating-count active', attrs={'data-table': 'rating-filter'})
+        #div = soup.find('div', class_='table-toggle rating-count active', attrs={'data-table': 'rating-filter'})
+    
 
-        #scraping primera pagina
-        #elf.numPags-=1 # Todo revisar aqui que pasa
-        print(self.numPags)
-        self.listaComentarios.extend(self.scrappingProfesor_SoloUnaPag(self.url,1))
-        #scraping a las paginas siguientes
-        if 1 < self.numPags:
-            for i in range(2,self.numPags+1):
-                nuevaLista=self.scrappingProfesor_SoloUnaPag(self.url + "?pag=" + str(i),i)
-                self.listaComentarios.extend(nuevaLista)
+        ul = soup.select_one('ul.pagination')
+        if (ul is None):
+            self.numPags=0
+        else:   
+            elementos_li = ul.select('li')
+
+            self.numPags=len(elementos_li)-2
+            print(self.numPags)
+
+            
+            #self.numComentarios= int(num)
+            #self.calcularNumeroPags()
+
+            # scraping a las paginas--------------------------------
+
+            #scraping primera pagina
+            #elf.numPags-=1 # Todo revisar aqui que pasa
+            print(self.numPags)
+            self.listaComentarios.extend(self.scrappingProfesor_SoloUnaPag(self.url,1))
+            #scraping a las paginas siguientes
+            if 1 < self.numPags:
+                for i in range(2,self.numPags+1):
+                    nuevaLista=self.scrappingProfesor_SoloUnaPag(self.url + "?pag=" + str(i),i)
+                    self.listaComentarios.extend(nuevaLista)
+            return True
+            print("termine")
 
 
     def listaComentarios_To_JSON(self):
@@ -154,9 +187,13 @@ class Scraping():
         # Convierte la lista de diccionarios en una cadena JSON
         listaComentarios_json = json.dumps(listaComentarios_dict, ensure_ascii=False)
 
+        if not os.path.exists(self.ruta_completa):
+            os.makedirs(os.path.dirname(self.ruta_completa), exist_ok=True)
+
         # Guarda la cadena JSON en un archivo
         with open(self.ruta_completa, 'w', encoding='utf8') as f:
             f.write(listaComentarios_json)
+        print("guarde json")
 
 
     def json_To_ListaComentarios(self)->List[Comentario]:

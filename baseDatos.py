@@ -52,8 +52,8 @@ class BaseDatos():
         self.conexion.close()
 
 
-    def actualizar_fecha_profesor(self,nombreProfesor:str):
-        """Actualiza la fecha de acuerdo al nombre del profesor en tabla con la fecha actual   
+    def actualizar_fecha_profesor(self, nombreProfesor:str):
+        """Actualiza o crea la fecha de acuerdo al nombre del profesor en la tabla con la fecha actual   
 
         Args:
             nombreProfesor (str): nombre del profesor en la tabla
@@ -64,17 +64,17 @@ class BaseDatos():
             # Obtén la fecha actual
             fecha_actual = datetime.now().strftime('%Y-%m-%d')
 
-            # Actualiza la fecha para el profesor dado
+            # Comprueba si el nombre del profesor existe en la tabla. Si existe, actualiza la fecha, si no, crea una nueva entrada
             cursor.execute('''
-                UPDATE diaActualizacion
-                SET fecha = ?
-                WHERE nombreProfesor = ?;
-            ''', (fecha_actual, nombreProfesor))
+                INSERT OR REPLACE INTO diaActualizacion(nombreProfesor, fecha)
+                VALUES (?, ?);
+            ''', (nombreProfesor, fecha_actual))
 
             self.conexion.commit()
             
         except Error as e:
             print(e)
+
 
 
     def calcular_dias_diferencia(self,nombreProfesor:str)->int:

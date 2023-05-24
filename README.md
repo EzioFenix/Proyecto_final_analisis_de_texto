@@ -94,6 +94,7 @@ document.querySelectorAll('table td.visible-xs').forEach(function(celda) {
     // Obtén el href y el texto "inherit" de la celda
     var href = enlace.getAttribute('href');
     var texto = celda.textContent.trim();
+     
 
     // Haz algo con el href y el texto
     salida += 'href: ' + href + '\n';
@@ -230,7 +231,9 @@ subgraph crear Configuracion
 
 ```
 
+# Problema de las paginas web
 
+Al tratar de obtener el nùmero
 
 # Resultado
 

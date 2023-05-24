@@ -7,23 +7,22 @@ from baseDatos import BaseDatos
 from scraping import Scraping
 
 
-def obtener_archivos_json():
+def obtener_archivos_json()->list:
     carpeta = "Comentarios_Profesores"
     archivos_json = []
 
     for archivo in os.listdir(carpeta):
         if archivo.endswith(".json"):
-            archivos_json.append(archivo)
+            ruta=os.path.join(carpeta,archivo)
+            archivos_json.append(ruta)
 
-    cantidad_archivos = len(archivos_json)
+    return archivos_json
 
-    return cantidad_archivos, archivos_json
-
-# Llamada a la función
-#cantidad, archivos = obtener_archivos_json()
 
 
 def retardo_aleatorio():
+    """Genera un retardo  de 1 5 minutos de retardo
+    """
     minutos = random.randint(1, 5)
     segundos = minutos * 60
     time.sleep(segundos)
@@ -97,7 +96,7 @@ def main():
         print(lista_links[0])
 
         
-        while(configuracion.numArchivosJson < configuracion.numMaxProfesores):
+        while(configuracion.numArchivosJson < 2036):
             i=configuracion.numArchivosJson
             nombre_Profe_Actual=lista_texto[i]
             url_Actual=lista_links[i]
@@ -108,8 +107,13 @@ def main():
             if (scramer.scrapear()==True):
                 db.actualizar_fecha_profesor(scramer.nombreProfesor)
                 configuracion.numArchivosJson+=1
-                configuracion.guardar_configuracion()
-                retardo_aleatorio()
+                
+                #retardo_aleatorio()
+            else:
+                db.actualizar_fecha_profesor(scramer.nombreProfesor)
+                configuracion.numMaxProfesores-=1
+            configuracion.guardar_configuracion()
+                
 
             
 main()
