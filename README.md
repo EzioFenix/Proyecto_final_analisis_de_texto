@@ -108,6 +108,16 @@ console.save(salida, 'profesores.txt');
 
 
 
+El programa tiene que realizarse en la pagina principal de mis `misprofesores.com` para una universidad, para el caso de mi universidad es 
+
+```
+https://www.misprofesores.com/escuelas/Facultad-de-Ingenieria_1511
+```
+
+![Imagin principal de misprofesores.com facultad ingenieria](./assets/image-20230529115914119.png)
+
+El número en **rojo** acerca del número de profesores tienes que tenerlo presente ya que en la configuracion inicial (la primera vez que ejecutes el programa) te pedirá ese dato :2036.
+
 ## ¿De qué tamaño es el conjunto? 
 
 Para comprobar que la extracción sea correcta y también para saber de cuantos elementos es el conjunto de entrenamiento es necesario tener el número de cometarios
@@ -146,7 +156,7 @@ Ejecución:
 La suma de todos los valores es: 11781
 ```
 
-El conjunto es pequeño (11,781) , ya que con el conjunto de enteramiento con los que he observado que entrenan superan fácilmente los 40,000.
+El conjunto es pequeño (11,781) , ya que con el conjunto de enteramiento con los que he observado que entrenan superan fácilmente los 40,000. Sin embargo hay que tener algo muy presente, puede que algunos comentarios están o estarán en **en revisión**, por lo cual se descartan y como resultado el conjunto total de comentarios puede ser menor. 
 
 ## Extracción de  los comentarios de cada profesor
 
@@ -233,14 +243,108 @@ subgraph crear Configuracion
 
 # Problema de las paginas web
 
-Al tratar de obtener el nùmero
+Al tratar de obtener el número de cuantas paginas hay por cada profesor, hay un problema al obtener el número de páginas para algunos problemas, ya sea por un error de etiquetas o porque se renderiza con JavaScript y por ello se tendría que utilizar algo más potente que `Beautiful Soup` , la solución obvia fue calcular aproximadamente cuantas páginas.
+
+**Se descartó:**
+
+![Número de página](./assets/image-20230529123039873.png)
+
+Entrando a cualquier profesor a la primera página de comentarios, se puede obtener el número de comentarios
+
+![image-20230529123226902](./assets/image-20230529123226902.png)
+
+y sabiendo que se muestran 5 comentarios por página, si tiene 6 comentarios, se tienen que hacer `scraping`  a la página 1,2, ya que hay 5 en la primera y 1 en la siguiente.
+
+# Mejorando el scraping
+
+No todo es posible que corra en un servidor, también es necesario que pueda continuar en automatico sin estar todo el tiempo disponible para hacer scraping, por eso utilizando en archivo de configuración guarda el último documento que fue scrapeado, la solución es suponiendo que se tiene un arreglo con todos los profesores y sus links, si el último que fue scrapeado fue el `profesor [100]` entonces se que `100` fue el último y este dato esta guardado en alchivo 
+
+```
+config.json
+```
+
+La manera que en se realiza
+
+```mermaid
+graph TD;
+ id1([Inicio del programa]) -->  A[Verifica el archivo config.js]
+ A--> |Recupera *I* de config.js| B[Toma el numero del ultimo profesor scraping *i*]
+ B--> C[scraping al profesor *i+1*]
+ C--> D{Scraping con exito?}
+ D --> |no| E[ Reducir el maximo de profesores]
+ D --> |si | G[Incrementa el número de archivos]
+ E -->  F[Guardar config.js]
+ G --> F
+ F --> |incrementa *I*| B
+
+ 
+```
+
+
+
+Lo que ocasiona el anterior flujo  ocasiona que si se interrumpe en cualquier momento el flujo anterior, va regresar al ultimo estado estable, que es cuando se guardo el ultimo scraping del anterior profesor, esto funciona mientras sigas teniendo la base datos `.sql` y  los archivos `.json` que contienen los comentarios de cada profesor.
+
+## Crear el dataset de entrenamiento 
+
+Cuando ya se tenga completado todos los archivos `.json` se crea un archivo `.csv` que contiene la siguiente estructura:
+
+| review                                                       | sentiment |
+| ------------------------------------------------------------ | --------- |
+| One of the other reviewers has mentioned that after watching just 1 Oz episode you'll be hooked. They are right, as this is exactly what happened with me.<br /><br /> | positive  |
+| A wonderful little production.                               | positive  |
+| I thought this was a wonderful way to spend time on a too hot summer weekend, sitting in the air conditioned theater and watching a light-hearted comedy. The plot is simplistic, but the dialogue is witty and the characters are likable (even the well bread suspected serial killer). While some may be disappointed when they realize this is not Match Point 2: Risk Addiction, | positive  |
+
+De donde me baso para mi trabajo de investigación usaron el `Bert` en la versión ingles, además de tener comentarios en ingles, son comentarios largos y por eso acortaron el entrenamiento a 200 tokens, los resultados son posibles en 2 estados, sin embargo para este caso  son 4 estados, lo usaré con comentarios más pequeños, además el set de entrenamiento es mucho menor, y por supuesto  el modelo usado es `BETO` la versión en español de `Bert`.
+
+## Crear dataSet de sentimientos
+
+Para mi caso especifico he creado 4 categorias.
+
+Tengo dos parámetros con los que puedo analizar la posibilidad 
+
+Malo <=5 o  5< Bueno  en cuanto **Calidad general** 
+
+Fácil <= 5 ,5< Dificil en **facilidad**
+
+![image-20230529143512049](./assets/image-20230529143512049.png)
+
+Entonces estoy re mapeando queda la siguiente manera
+
+![diagrama_estados](./assets/diagrama_estados.png)
 
 # Resultado
 
-## 
+Existe en el menú principal un modo que compara el archivo `dataSet-input.csv` que es la entrada con la que el modelo funciona
 
 # Conclusión
 
 # Visión futura
 
-# Conclusiones
+- El programa sirve perfectamente para entender como es que se comporta el profesor  de acuerdo a sus comentarios, simplifica la elección de profesores basado en comentarios,  podria decirse que podria clasificarse cierta medida a partir de los datos para seleccionar a profesores a incribir depndiendo de las necesidades de cada alumno.
+- Podría unirse este analizador de sentimientos a **Facebook** para tener un análisis más profundo, y posterior a tener clasificación total del profesor basado en estadística y quedaría dado los resultados de todos los comentarios dados por los compañeros,  también podría unirse a un programa ya existente que realice para crear las posibles configuraciones de horarios, y escoger horario de acuerdo con comentarios.
+- Puede implementarse interfaces gráficas para mejorar la experiencia de este programa.
+- La detección de comentarios que buscan  confundir  
+
+# Referencias
+
+- mrm8488. (2023, 29 de mayo). BETO_getting_started.ipynb. GitHub. https://colab.research.google.com/github/mrm8488/beto/blob/master/BETO_getting_started.ipynb
+
+- Mermaid. (2023, 29 de mayo). Sintaxis de los diagramas de flujo. https://mermaid.js.org/syntax/flowchart.html
+
+- QData. (2023, 29 de mayo). Example_4_CamemBERT.ipynb - Colaboratory. GitHub. https://colab.research.google.com/github/QData/TextAttack/blob/master/docs/2notebook/Example_4_CamemBERT.ipynb#scrollTo=koVcufVBD9uv
+
+- CamemBERT. (2023, 29 de mayo). CamemBERT. https://camembert-model.fr/
+
+- YouTube. (2023, 29 de mayo). [Video]. https://www.youtube.com/watch?v=IRtHuwSPaGo
+
+- Wb-az. (2023, 29 de mayo). Transformers-Emotion-Analysis. GitHub. https://github.com/Wb-az/Transformers-Emotion-Analysis
+
+- codificandobits. (2023, 29 de mayo). Analisis_de_sentimientos_con_BERT/BERT_analisis_sentimientos.ipynb. GitHub. https://github.com/codificandobits/Analisis_de_sentimientos_con_BERT/blob/master/BERT_analisis_sentimientos.ipynb
+
+- Codificando Bits. (2023, 29 de mayo). Análisis de sentimientos con BERT en Python (Tutorial) [Video]. YouTube. https://www.youtube.com/watch?v=mvh7DV84mr4
+
+- Codificando Bits. (2023, 29 de mayo). Comprensión de texto con BERT en PYTHON (Tutorial) [Video]. YouTube. https://www.youtube.com/watch?v=iPrwWtVl0LM
+
+- Chat GPT 4.0 con Pluggins  (May 24,2023)
+
+Das últimas 3 referencias son las que hacen entender cada parte del código

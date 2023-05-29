@@ -23,8 +23,8 @@ def obtener_archivos_json()->list:
 def retardo_aleatorio():
     """Genera un retardo  de 1 5 minutos de retardo
     """
-    minutos = random.randint(1, 5)
-    segundos = minutos * 60
+    minutos = random.randint(0, 1)
+    segundos = minutos * 30
     time.sleep(segundos)
     print("Retardo completado.")
 
@@ -111,6 +111,7 @@ def main():
                 #retardo_aleatorio()
             else:
                 db.actualizar_fecha_profesor(scramer.nombreProfesor)
+                configuracion.numArchivosJson+=1
                 configuracion.numMaxProfesores-=1
             configuracion.guardar_configuracion()
                 

@@ -133,9 +133,17 @@ class Scraping():
             List[Comentario]: Lista de comentarios del profesor de su pagina mis profesores.com
         """
         response = requests.get(self.url)
+
+
+        if response.status_code == 404:
+            print("La página web no existe.")
+            return False
+
         
         # Crear el objeto BeautifulSoup con el contenido HTML de la página
         soup = BeautifulSoup(response.content, 'html.parser')
+
+
 
         # Buscar la tabla por su clase CSS
         # -2  es poruqe el final es una vacia en li
@@ -169,8 +177,9 @@ class Scraping():
                 for i in range(2,self.numPags+1):
                     nuevaLista=self.scrappingProfesor_SoloUnaPag(self.url + "?pag=" + str(i),i)
                     self.listaComentarios.extend(nuevaLista)
-            return True
             print("termine")
+            return True
+
 
 
     def listaComentarios_To_JSON(self):
