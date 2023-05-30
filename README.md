@@ -23,19 +23,19 @@ Sin embargo, debo enfatizar que el camino hacia la realización de este proyecto
 
 ## Construcción del programa
 
-1. **Extractor de comentarios:** Este programa realiza *scraping* a la página misprofesores.com utilizando **Beautiful Soup**, almacenando los comentarios en archivos JSON individuales por cada profesor. De esta forma, los comentarios de cada docente se guardan de manera independiente.
+1. **Extractor de comentarios:** Este programa realiza *scraping* en la página misprofesores.com utilizando la biblioteca **Beautiful Soup**, almacenando los comentarios en archivos JSON individuales por cada profesor. De esta manera, se guarda cada comentario de los docentes de forma independiente.
 
-2. **Almacenamiento en una base de datos adicional:** Es impráctico obtener todos los datos de todos los profesores de manera simultánea, dado que cada docente cuenta con múltiples páginas de comentarios. Por ello, se guarda una especie de *cache* que indica cuándo fue la última vez que se recuperaron los comentarios de cada profesor.
+2. **Almacenamiento en una base de datos adicional:** Obtener todos los datos de todos los profesores simultáneamente resulta impráctico, ya que cada docente cuenta con múltiples páginas de comentarios. Por lo tanto, se implementa una especie de caché que indica cuándo se recuperaron por última vez los comentarios de cada profesor.
 
-3. **Creación de un archivo de datos para el entrenamiento:** Se genera un archivo de datos con el objetivo de poder entrenar el modelo de datos BERT.
+3. **Creación de un archivo de datos para el entrenamiento:** Se genera un archivo de datos con el objetivo de entrenar el modelo de datos BERT.
 
-4. **Entrenamiento del modelo BERT:** Con los datos previamente obtenidos y organizados, se procede a entrenar el modelo BERT.
+4. **Entrenamiento del modelo BERT:** Utilizando los datos previamente obtenidos y organizados, se procede a entrenar el modelo BERT.
 
-5. **Prueba del modelo** con datos diferentes a los utilizados durante el entrenamiento, con el fin de observar su comportamiento.
+5. **Prueba del modelo** con datos diferentes a los utilizados durante el entrenamiento, con el fin de evaluar su comportamiento.
 
-6. **Elaboración de estadísticas y métricas:** Para verificar su eficacia, se realizarán estadísticas y métricas, y se elaborará un informe de ello. Esto se llevará a cabo utilizando un conjunto de prueba con posibles respuestas, que son diferentes a las respuestas con las que se entrenó el modelo.
+6. **Elaboración de estadísticas y métricas:** Para verificar su eficacia, se realizan estadísticas y métricas, y se elabora un informe en base a ello. Esto se lleva a cabo utilizando un conjunto de prueba con posibles respuestas, las cuales difieren de las respuestas utilizadas durante el entrenamiento del modelo.
 
-# Diario de viaje  (resolviendo el problema)
+# Diario de viaje (resolviendo el problema)
 
 ## Extracción de datos de la página web (lista de profesores) mediante técnicas de scraping
 
@@ -43,7 +43,7 @@ Sin embargo, debo enfatizar que el camino hacia la realización de este proyecto
 pagina: https://www.misprofesores.com/escuelas/Facultad-de-Ingenieria_1511
 ```
 
-Se detectó un problema relacionado con una etiqueta o algún otro aspecto al intentar obtener la información a través de técnicas de scraping. Sin embargo, al utilizar un navegador, se observó que este corrigió el error debido a la flexibilidad de HTML y JavaScript. La opción más obvia y exitosa resultó ser realizar el scraping directamente desde el navegador, aprovechando el motor de renderizado HTML y JavaScript que corrigió los errores.
+Se detectó un problema relacionado con una etiqueta u otro aspecto al intentar obtener la información a través de técnicas de scraping. Sin embargo, al utilizar un navegador, se observó que este corrigió el error debido a la flexibilidad de HTML y JavaScript. La opción más obvia y exitosa fue realizar el scraping directamente desde el navegador, aprovechando el motor de renderizado HTML y JavaScript que solucionó los errores.
 
 La solución consistió en utilizar la consola del navegador para llevar a cabo el scraping. Los datos se obtuvieron utilizando el método `document.getElementById`, y la salida de la consola se redirigió a un archivo de texto que se descargó en el navegador una vez que se completó la extracción de datos de los profesores.
 
@@ -51,14 +51,10 @@ La solución consistió en utilizar la consola del navegador para llevar a cabo 
 graph TD;
   	misProfesores.com -->navegador;
     navegador--> consola;
-    consola--> profesores.txt;
-    
-    
+    consola--> profesores.txt; 
 ```
 
-
-
-El siguiente código se realiza dicha extracción:
+El siguiente código se utiliza para realizar dicha extracción:
 
 ```js
 console.save = function(data, filename) {
@@ -91,12 +87,11 @@ document.querySelectorAll('table td.visible-xs').forEach(function(celda) {
   // Verificar si la celda contiene un enlace con un atributo href
   var enlace = celda.querySelector('a');
   if (enlace && enlace.hasAttribute('href')) {
-    // Obtén el href y el texto "inherit" de la celda
+    // Obtener el href y el texto "inherit" de la celda
     var href = enlace.getAttribute('href');
     var texto = celda.textContent.trim();
-     
 
-    // Haz algo con el href y el texto
+    // Realizar alguna operación con el href y el texto
     salida += 'href: ' + href + '\n';
     salida += 'Texto: ' + texto + '\n';
   }
@@ -106,17 +101,15 @@ document.querySelectorAll('table td.visible-xs').forEach(function(celda) {
 console.save(salida, 'profesores.txt');
 ```
 
-
-
-El programa tiene que realizarse en la pagina principal de mis `misprofesores.com` para una universidad, para el caso de mi universidad es 
+El programa debe ejecutarse en la página principal de misprofesores.com para una universidad específica. En el caso de tu universidad, la página principal es:
 
 ```
 https://www.misprofesores.com/escuelas/Facultad-de-Ingenieria_1511
 ```
 
-![Imagin principal de misprofesores.com facultad ingenieria](./assets/image-20230529115914119.png)
+![Imagen principal de misprofesores.com para la facultad de ingeniería](./assets/image-20230529115914119.png)
 
-El número en **rojo** acerca del número de profesores tienes que tenerlo presente ya que en la configuracion inicial (la primera vez que ejecutes el programa) te pedirá ese dato :2036.
+El número en **rojo** que indica la cantidad de profesores debe tenerse en cuenta, ya que en la configuración inicial (la primera vez que ejecutes el programa), se te pedirá ese dato: 2036.
 
 ## ¿De qué tamaño es el conjunto? 
 
@@ -443,16 +436,61 @@ Existe en el menú principal un modo que compara el archivo `dataSet-input.csv` 
 
 El resultado es que mejoro muy poco con respecto  a la que no tenia drop, entonces la mejora es mínima.
 
+![resultado2](./assets/resultado2.png)
+
+![resultado2-1](./assets/resultado2-1.png)
+
+## Prueba 3: Acotado a 4 casos (con drop_output)
+
+Teniendo los parámetros guardados del programa, sólo se había explotado el valor asociado a la facilidad teniendo 2 posibles opciones,**facil,dificil** , pero ahora se agregarán 2 nuevos valores de una variable, que puede ser **malo,bueno** es en calidad general, por lo cual ahora hay cuatro posibles características.
+
+Para lograr lo anteriormente planteado es necesario crear un nuevo conjunto que incluya los nuevos valores, por ejemplo "facil-malo".
+
+**Modificar**
+
+
+
+En el caso de `bert` se tiene que emplear lo siguiente
+
+```python
+DATASET_PATH = '/content/drive/MyDrive/input3.csv'
+NCLASSES = 4
+```
+
+
+
+Ya que el csv cambió, y el número de clases también cambió.
+
+| Época | Pérdida de Entrenamiento | Precisión de Entrenamiento | Pérdida de Validación | Precisión de Validación |
+| ----- | ------------------------ | -------------------------- | --------------------- | ----------------------- |
+| 1     | 0.8956081299185753       | 0.689375                   | 0.8354219675064087    | 0.6900000000000001      |
+| 2     | 0.7726683940291404       | 0.714125                   | 0.8017361276149749    | 0.705                   |
+| 3     | 0.7139917816221714       | 0.734375                   | 0.7997174730300903    | 0.7065                  |
+| 4     | 0.6634449841976165       | 0.7465                     | 0.8024916416406631    | 0.704                   |
+| 5     | 0.6244435852468013       | 0.760625                   | 0.821673817038536     | 0.705                   |
+
+
+
+![](./assets/resultado3-1.png)
+
+![](./assets/resultado3-2.png)
+
+## Prueba 4: Acotado a 4 casos (en idioma español el modelo Beto)
+
 
 
 # Conclusión
 
+El programa demuestra una funcionalidad excepcional al entender el concepto de cómo opera el procesamiento del lenguaje natural en las inteligencias artificiales. Este entendimiento se convierte en un gran apoyo dado el creciente interés suscitado por la aparición de modelos como GPT.
+
+Bert es un modelo altamente versátil que puede adaptarse a múltiples propósitos, según el área en la que se desee entrenarlo. En mi caso, se utilizó para analizar sentimientos, y los resultados fueron muy satisfactorios. Al utilizar un modelo en español, los resultados fueron superiores a los obtenidos con modelos en inglés, ya que la forma de analizar los sentimientos puede variar significativamente entre diferentes idiomas. En este caso, se entrenaron modelos para detectar 2 o 4 sentimientos basándose en una respuesta, sin embargo, este modelo puede adaptarse para identificar una mayor variedad de sentimientos si se modifican los parámetros correspondientes.
+
 # Visión futura
 
-- El programa sirve perfectamente para entender como es que se comporta el profesor  de acuerdo a sus comentarios, simplifica la elección de profesores basado en comentarios,  podria decirse que podria clasificarse cierta medida a partir de los datos para seleccionar a profesores a incribir depndiendo de las necesidades de cada alumno.
-- Podría unirse este analizador de sentimientos a **Facebook** para tener un análisis más profundo, y posterior a tener clasificación total del profesor basado en estadística y quedaría dado los resultados de todos los comentarios dados por los compañeros,  también podría unirse a un programa ya existente que realice para crear las posibles configuraciones de horarios, y escoger horario de acuerdo con comentarios.
-- Puede implementarse interfaces gráficas para mejorar la experiencia de este programa.
-- La detección de comentarios que buscan  confundir  a los alumnos evaluando mal a profesores para que otros alumnos sean los que se inscriban, para lograr ello sólo es necesario tomar las fechas de bajas y calcular una vecindad que se podría determinar fraudulenta, y tomar estadística de los profesores para saber la tendencia generalizada.
+- El programa resulta altamente útil para entender el comportamiento de un profesor a través de sus comentarios. Esto facilita la selección de profesores en base a las evaluaciones recibidas, permitiendo a los estudiantes tomar decisiones más informadas respecto a qué cursos inscribir. En un sentido amplio, los datos podrían utilizarse para establecer un sistema de clasificación de profesores basado en las necesidades individuales de cada estudiante.
+- Este analizador de sentimientos podría integrarse a plataformas como **Facebook** para obtener un análisis más profundo. Posteriormente, podría establecerse una clasificación completa del profesor basada en datos estadísticos obtenidos de todos los comentarios emitidos por los estudiantes. Además, se podría unir a un programa existente para crear configuraciones de horarios posibles, permitiendo a los estudiantes seleccionar horarios basándose en los comentarios recibidos.
+- Este programa podría beneficiarse de la implementación de interfaces gráficas para mejorar la experiencia de los usuarios.
+- Podría diseñarse un sistema para detectar comentarios fraudulentos cuyo objetivo sea confundir a los estudiantes con evaluaciones negativas de profesores. Para esto, solo sería necesario tomar en cuenta las fechas de baja y calcular una vecindad que se podría considerar como indicativa de actividad fraudulenta. Además, se podría recopilar información estadística sobre los profesores para conocer su tendencia generalizada.
 
 # Referencias
 

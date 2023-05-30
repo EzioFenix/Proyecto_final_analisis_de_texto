@@ -87,13 +87,13 @@ def comentarios_To_Csv(listaComentarios:list[Comentario]):
                 else:
                     sentiment+= sentimientos[2] +"+"
                 
-                """
+                #"""
                 if float(commen.score_general) <= 5.0:
                     sentiment+= sentimientos[1]
                 else:
                     sentiment += sentimientos[0]
 
-                """
+                #"""
 
                 # Escribir los valores de los atributos de los objetos
                 escritor_csv.writerow([review, sentiment])
