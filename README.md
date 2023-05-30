@@ -314,7 +314,114 @@ Entonces estoy re mapeando queda la siguiente manera
 
 # Resultado
 
+## Prueba 1: Acotado a 2 casos (sin drop_output)
+
+En este caso sólo se acotó a dos casos de lo que podía distinguir el modelo entre profesor `fácil`, `díficil` para ello es necesario cambiar una  pequeña parte del código `menu3.py` que se muestra a continuación en la función ` comentarios_To_Csv`
+
+```python
+if float(commen.score_facilidad)<=5.0:
+                    sentiment+= sentimientos[3] +"+" #dificil
+                else:
+                    sentiment+= sentimientos[2] +"+" #facil
+                
+                """
+                if float(commen.score_general) <= 5.0:
+                    sentiment+= sentimientos[1]
+                else:
+                    sentiment += sentimientos[0]
+
+                """
+```
+
+**Para desactivar ** drop-out realize lo siguiente en el código de colab
+
+```python
+# EL MODELO!
+
+class BERTSentimentClassifier(nn.Module):
+
+  def __init__(self, n_classes):
+    super(BERTSentimentClassifier, self).__init__()
+    self.bert = BertModel.from_pretrained(PRE_TRAINED_MODEL_NAME)
+    self.drop = nn.Dropout(p=0.3)
+    self.linear = nn.Linear(self.bert.config.hidden_size, n_classes)
+
+  def forward(self, input_ids, attention_mask):
+    _, cls_output = self.bert(
+        input_ids = input_ids,
+        attention_mask = attention_mask,
+        return_dict=False
+    )
+    #drop_output = self.drop(cls_output)
+    #output = self.linear(drop_output)
+
+    output=self.linear(cls_output)
+    return output
+```
+
+**Como se observa hay líneas comentadas y se le pasa directamente a la salida sin pasar por el drop_out**
+
+se comenta para que solo pueda  ser o `facil` o `dificil` teniendo dos posibles casos
+
+**Tabla de pérdida:**
+
+ Epoch  Entrenamiento  Validación
+     1       0.537200    0.585725
+     2       0.558802    0.579712
+     3       0.564342    0.579672
+     4       0.563949    0.579366
+     5       0.563729    0.580076
+
+**Tabla de precisión:** 
+
+Epoch  Entrenamiento  Validación
+     1         0.75425       0.734
+     2         0.75250       0.734
+     3         0.74900       0.734
+     4         0.74900       0.734
+     5         0.74900       0.734
+
+Vista en tabla se observa de la siguiente manera:
+
+![/](./assets/resultado1.png)
+
+Si se desea repetir el experimento se tienen los archivos `prueba1.ipynb` y  `input2.csv` en la carpeta de `pruebas`
+
+
+
+## Prueba 2: Acotado a 2 casos (con drop_output)
+
+Es el mismo caso que el anterior sólo que aquí se descomentará  las lineas que evitaban que existiera `drop_output`, el resultado se almacenará como `prueba-2` en una capeta con su archivo de jupyter y su `csv` quedando de la siguiente manera el modelo
+
+```python
+# EL MODELO!
+
+class BERTSentimentClassifier(nn.Module):
+
+  def __init__(self, n_classes):
+    super(BERTSentimentClassifier, self).__init__()
+    self.bert = BertModel.from_pretrained(PRE_TRAINED_MODEL_NAME)
+    self.drop = nn.Dropout(p=0.3)
+    self.linear = nn.Linear(self.bert.config.hidden_size, n_classes)
+
+  def forward(self, input_ids, attention_mask):
+    _, cls_output = self.bert(
+        input_ids = input_ids,
+        attention_mask = attention_mask,
+        return_dict=False
+    )
+    drop_output = self.drop(cls_output)
+    output = self.linear(drop_output)
+
+    #output=self.linear(cls_output)
+    return output
+```
+
+
+
 Existe en el menú principal un modo que compara el archivo `dataSet-input.csv` que es la entrada con la que el modelo funciona
+
+
 
 # Conclusión
 
@@ -323,7 +430,7 @@ Existe en el menú principal un modo que compara el archivo `dataSet-input.csv` 
 - El programa sirve perfectamente para entender como es que se comporta el profesor  de acuerdo a sus comentarios, simplifica la elección de profesores basado en comentarios,  podria decirse que podria clasificarse cierta medida a partir de los datos para seleccionar a profesores a incribir depndiendo de las necesidades de cada alumno.
 - Podría unirse este analizador de sentimientos a **Facebook** para tener un análisis más profundo, y posterior a tener clasificación total del profesor basado en estadística y quedaría dado los resultados de todos los comentarios dados por los compañeros,  también podría unirse a un programa ya existente que realice para crear las posibles configuraciones de horarios, y escoger horario de acuerdo con comentarios.
 - Puede implementarse interfaces gráficas para mejorar la experiencia de este programa.
-- La detección de comentarios que buscan  confundir  
+- La detección de comentarios que buscan  confundir  a los alumnos evaluando mal a profesores para que otros alumnos sean los que se inscriban, para lograr ello sólo es necesario tomar las fechas de bajas y calcular una vecindad que se podría determinar fraudulenta, y tomar estadística de los profesores para saber la tendencia generalizada.
 
 # Referencias
 
