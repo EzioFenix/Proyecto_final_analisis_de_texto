@@ -1,0 +1,7 @@
+#!C:\Users\vaito\OneDrive\Documentos\GitHub\Proyecto_final_analisis_de_texto\venv-windows\Scripts\python.exe
+import pcsv
+from jtutils import fix_broken_pipe
+
+if __name__ == "__main__":
+    fix_broken_pipe()
+    pcsv.pcsv()
