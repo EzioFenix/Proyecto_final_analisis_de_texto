@@ -44,7 +44,7 @@ class Comentario:
             fecha=source['fecha'],
             score_general=source['score_general'],
             score_facilidad=source['score_facilidad'],
-            score_Total=source['score_Total'],
+            #score_Total=source['score_Total'],
             materia=source['materia'],
             comments=source['comments']
         )
