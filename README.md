@@ -421,6 +421,28 @@ class BERTSentimentClassifier(nn.Module):
 
 Existe en el menú principal un modo que compara el archivo `dataSet-input.csv` que es la entrada con la que el modelo funciona
 
+**Tabla de pérdida:**
+
+| Epoch | Entrenamiento      | Validación         |
+| ----- | ------------------ | ------------------ |
+| 1     | 0.589561250180006  | 0.5809156138896943 |
+| 2     | 0.5798053234815598 | 0.5806862189769745 |
+| 3     | 0.5816135759353638 | 0.5801328020095825 |
+| 4     | 0.5771492357552052 | 0.580109525680542  |
+| 5     | 0.5737003091573715 | 0.5812571394443512 |
+
+**Tabla de precisión:**
+
+| Epoch | Entrenamiento | Validación |
+| ----- | ------------- | ---------- |
+| 1     | 74.2375       | 73.4       |
+| 2     | 74.7          | 73.4       |
+| 3     | 74.575        | 73.4       |
+| 4     | 74.925        | 73.4       |
+| 5     | 74.9          | 73.4       |
+
+El resultado es que mejoro muy poco con respecto  a la que no tenia drop, entonces la mejora es mínima.
+
 
 
 # Conclusión
