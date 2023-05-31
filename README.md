@@ -457,6 +457,37 @@ DATASET_PATH = '/content/drive/MyDrive/input3.csv'
 NCLASSES = 4
 ```
 
+y el código para asignar un valor numérico en el resultado de la respuesta
+
+```python
+# Crear un mapeo de los sentimientos a números
+sentiment_mapping = {
+    "fácil+bueno": 0,
+    "díficil+bueno": 1,
+    "fácil+malo": 2,
+    "díficil+malo": 3
+}
+
+# Aplicar el mapeo al DataFrame
+df['label'] = df['sentiment'].map(sentiment_mapping)
+
+# Eliminar la columna 'sentiment' ya que hemos consolidado la información en la nueva columna 'label'
+df.drop('sentiment', axis=1, inplace=True)
+
+# Mostrar las primeras filas del DataFrame modificado
+df.head()
+```
+
+Aquí tienes los datos convertidos en una tabla:
+
+| Índice | Comentario                                        | Calificación |
+| ------ | ------------------------------------------------- | ------------ |
+| 0      | BarcoTuve la oportunidad de tomar diplomado co... | 3            |
+| 1      | Tuve la oportunidad de tomar diplomado con mis... | 3            |
+| 2      | Tuve la oportunidad de tomar diplomado con mis... | 2            |
+| 3      | Tuve la oportunidad de tomar diplomado con mis... | 3            |
+| 4      | Inspiracional, Clases excelentes, Muchos proye... | 3            |
+
 
 
 Ya que el csv cambió, y el número de clases también cambió.
@@ -477,7 +508,19 @@ Ya que el csv cambió, y el número de clases también cambió.
 
 ## Prueba 4: Acotado a 4 casos (en idioma español el modelo Beto)
 
+Para este caso se puede ver una mejora significativamente en la precisión en el entrenamiento de hasta 80% sólo se tendría que modificar parámetros para que eso se mantenga en datos reales, pero con respecta a otros intentos que llegaban hasta un poco más de 73% esta esta es una mejora significativa.
 
+| Epoch | Entrenamiento Loss | Entrenamiento Accuracy | Validación Loss | Validación Accuracy |
+| ----- | ------------------ | ---------------------- | --------------- | ------------------- |
+| 1     | 0.8539             | 0.6944                 | 0.7888          | 0.707               |
+| 2     | 0.7397             | 0.7258                 | 0.7818          | 0.7095              |
+| 3     | 0.6574             | 0.7601                 | 0.8008          | 0.708               |
+| 4     | 0.5847             | 0.7855                 | 0.8527          | 0.7015              |
+| 5     | 0.5286             | 0.8071                 | 0.8717          | 0.6955              |
+
+Nota: Los valores de "Loss" y "Accuracy" han sido redondeados a cuatro decimales para simplificar la tabla.
+
+![resultado4-1](./assets/resultado4-1.png)
 
 # Conclusión
 
