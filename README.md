@@ -7,6 +7,10 @@ nombre de programa: Analizador misProfesores
 Fecha de publicación: 08/05/2023
 ```
 
+# Resumen
+
+Este artículo propone el desarrollo de un analizador de texto basado en la inteligencia artificial y el procesamiento del lenguaje natural, específicamente utilizando el modelo BERT, para interpretar y categorizar comentarios de estudiantes sobre profesores. El objetivo es proporcionar una herramienta efectiva para identificar las evaluaciones positivas, negativas, entre otras, facilitando a los estudiantes la elección de profesores altamente calificados durante el proceso de inscripción.
+
 # Objetivo
 
 El propósito es desarrollar un analizador de textos sofisticado que pueda discernir si un comentario es positivo, negativo o engañoso. Este instrumento deberá ser capaz de seleccionar a los profesores mejor calificados, basándose en los comentarios realizados en relación a una asignatura específica, con el fin de facilitar el proceso de inscripción. Este sistema de evaluación permitirá que los estudiantes tomen decisiones más informadas sobre qué profesores elegir, y ayudará a asegurar la calidad educativa y la satisfacción del estudiante.
@@ -354,25 +358,18 @@ class BERTSentimentClassifier(nn.Module):
 
 **Como se observa hay líneas comentadas y se le pasa directamente a la salida sin pasar por el drop_out**
 
-se comenta para que solo pueda  ser o `facil` o `dificil` teniendo dos posibles casos
+Se comenta para que solo pueda  ser o `facil` o `dificil` teniendo dos posibles casos
 
-**Tabla de pérdida:**
+| Epoch | Entrenamiento Loss | Validación Loss | Entrenamiento Accuracy | Validación Accuracy |
+|-------|--------------------|-----------------|-----------------------|---------------------|
+|   1   |      0.537200      |     0.585725    |        0.75425        |        0.734        |
+|   2   |      0.558802      |     0.579712    |        0.75250        |        0.734        |
+|   3   |      0.564342      |     0.579672    |        0.74900        |        0.734        |
+|   4   |      0.563949      |     0.579366    |        0.74900        |        0.734        |
+|   5   |      0.563729      |     0.580076    |        0.74900        |        0.734        |
 
- Epoch  Entrenamiento  Validación
-     1       0.537200    0.585725
-     2       0.558802    0.579712
-     3       0.564342    0.579672
-     4       0.563949    0.579366
-     5       0.563729    0.580076
+En esta tabla combinada, se muestra la pérdida de entrenamiento y validación, así como la precisión de entrenamiento y validación para cada época.
 
-**Tabla de precisión:** 
-
-Epoch  Entrenamiento  Validación
-     1         0.75425       0.734
-     2         0.75250       0.734
-     3         0.74900       0.734
-     4         0.74900       0.734
-     5         0.74900       0.734
 
 Vista en tabla se observa de la siguiente manera:
 
@@ -414,25 +411,18 @@ class BERTSentimentClassifier(nn.Module):
 
 Existe en el menú principal un modo que compara el archivo `dataSet-input.csv` que es la entrada con la que el modelo funciona
 
-**Tabla de pérdida:**
 
-| Epoch | Entrenamiento      | Validación         |
-| ----- | ------------------ | ------------------ |
-| 1     | 0.589561250180006  | 0.5809156138896943 |
-| 2     | 0.5798053234815598 | 0.5806862189769745 |
-| 3     | 0.5816135759353638 | 0.5801328020095825 |
-| 4     | 0.5771492357552052 | 0.580109525680542  |
-| 5     | 0.5737003091573715 | 0.5812571394443512 |
 
-**Tabla de precisión:**
+| Epoch | Entrenamiento Loss | Validación Loss | Entrenamiento Accuracy | Validación Accuracy |
+|-------|--------------------|-----------------|-----------------------|---------------------|
+|   1   |  0.589561250180006 | 0.5809156138896943 |      74.2375         |         73.4        |
+|   2   | 0.5798053234815598 | 0.5806862189769745 |       74.7           |         73.4        |
+|   3   | 0.5816135759353638 | 0.5801328020095825 |      74.575          |         73.4        |
+|   4   | 0.5771492357552052 | 0.580109525680542  |      74.925          |         73.4        |
+|   5   | 0.5737003091573715 | 0.5812571394443512 |       74.9           |         73.4        |
 
-| Epoch | Entrenamiento | Validación |
-| ----- | ------------- | ---------- |
-| 1     | 74.2375       | 73.4       |
-| 2     | 74.7          | 73.4       |
-| 3     | 74.575        | 73.4       |
-| 4     | 74.925        | 73.4       |
-| 5     | 74.9          | 73.4       |
+
+
 
 El resultado es que mejoro muy poco con respecto  a la que no tenia drop, entonces la mejora es mínima.
 
@@ -522,11 +512,33 @@ Nota: Los valores de "Loss" y "Accuracy" han sido redondeados a cuatro decimales
 
 ![resultado4-1](./assets/resultado4-1.png)
 
+## Resultados Finales
+
+Pondré un poco de las definiciones dadas por GPT-4 acerca de las métricas:
+
+- **Entrenamiento Loss:** Es una medida de la discrepancia entre las predicciones realizadas por el modelo durante el entrenamiento y los valores reales o etiquetas de los datos de entrenamiento. El objetivo del entrenamiento es minimizar esta pérdida, lo que implica ajustar los parámetros del modelo para que las predicciones se acerquen lo más posible a los valores reales.
+- **Validación Loss:** Similar al entrenamiento loss, es una medida de la discrepancia entre las predicciones del modelo y las etiquetas correspondientes, pero se calcula utilizando un conjunto de datos de validación independiente. Este conjunto de datos de validación se utiliza para evaluar el rendimiento del modelo en datos no vistos durante el entrenamiento y para evitar el sobreajuste (cuando el modelo se ajusta demasiado a los datos de entrenamiento y no generaliza bien).
+
+El entrenamiento accuracy (exactitud de entrenamiento) y validación accuracy (exactitud de validación) son métricas que miden el rendimiento del modelo en términos de la precisión de las predicciones:
+
+- **Entrenamiento Accuracy:** Es la proporción de predicciones correctas realizadas por el modelo en relación con el número total de ejemplos en el conjunto de datos de entrenamiento. Mide qué tan bien se ajusta el modelo a los datos de entrenamiento específicamente.
+- **Validación Accuracy:** Es la proporción de predicciones correctas realizadas por el modelo en relación con el número total de ejemplos en el conjunto de datos de validación. Evalúa qué tan bien generaliza el modelo en datos nuevos y no vistos durante el entrenamiento.
+
+Tomando las cuatro pruebas en su último spoch 
+
+![](./assets/image-20230615201333267.png)
+
+Se observa que la prueba 1 y 2 tienen aproximadamente los mismos resultados, solo cambia mínimamente la pérdida en entrenamiento. Se observa que el mayor tope de precisión durante el entrenamiento se encuentra en la prueba 3, disminuyendo un poco en la prueba 4. Es algo curioso el resultado ya que el resultado con mayor precisión está durante la prueba 3, que aunque no sea la lengua del lenguaje con la que fue entrenada (inglés) y los comentarios que están en español, tiene una precisión mayor incluso que el modelo en español (Beto), dependiendo del **epoch**. Aquí solo pueden pasar 2 cosas, que el modelo Beto que fue usado no es el mejor porque hay variantes dentro del mismo, o que la versión original sigue siendo superior, no entiendo por qué tiene un peor rendimiento, sin embargo, es de apreciar que la pérdida de entrenamiento fue mucho menor que la prueba 3.
+
 # Conclusión
 
 El programa demuestra una funcionalidad excepcional al entender el concepto de cómo opera el procesamiento del lenguaje natural en las inteligencias artificiales. Este entendimiento se convierte en un gran apoyo dado el creciente interés suscitado por la aparición de modelos como GPT.
 
-Bert es un modelo altamente versátil que puede adaptarse a múltiples propósitos, según el área en la que se desee entrenarlo. En mi caso, se utilizó para analizar sentimientos, y los resultados fueron muy satisfactorios. Al utilizar un modelo en español, los resultados fueron superiores a los obtenidos con modelos en inglés, ya que la forma de analizar los sentimientos puede variar significativamente entre diferentes idiomas. En este caso, se entrenaron modelos para detectar 2 o 4 sentimientos basándose en una respuesta, sin embargo, este modelo puede adaptarse para identificar una mayor variedad de sentimientos si se modifican los parámetros correspondientes.
+Bert es un modelo altamente versátil que puede adaptarse a múltiples propósitos, según el área en la que se desee entrenarlo. En mi caso, se utilizó para analizar sentimientos, y los resultados fueron muy satisfactorios. Al utilizar un modelo en español, los resultados no fueron  superiores a los obtenidos con modelos en inglés, debido a posibles errores al construir Beto o que no era el modelo adecuado para esta tarea, ya que hay diferentes versiones de Beto, a diferencia de Bert que tiene el oficial.
+
+Podría decir que el modelo aproximadamente tiene un +70% de precisión con un poco de variabilidad. Como experimento de investigación, tiene resultados buenos, sin embargo, para elegir profesores, se debería tener un poco más de precisión, cercano a un 80-90%, para después pasar a comentarios de otras plataformas como Facebook, donde se difunden comentarios de los profesores y creo que son más confiables que los encontrados en misprofesores.com, ya que en ocasiones se muestran comentarios que son falsos.
+
+El objetivo de mostrar comentarios falsos no se pudo obtener, ya que, debido a que todavía no cuento con los calendarios pasados para discriminar temporadas de altas y bajas, me es difícil proporcionarle al programa una manera de identificar, ya que la manera con mayor precisión es calculando una fecha con "x" días antes y "x" días después de la fecha de altas y bajas, ya que es cuando se presta a escribir comentarios falsos para que otros estudiantes no se inscriban. Lo bueno a esto es que, como existen los calendarios en la página de la facultad hasta del 2010, puedo encontrar dichos calendarios, guardarlos en la base de datos, y el programa creará datos que están entre ciertas fechas diciendo que son "falsos", y con esto se podría cambiar ligeros rasgos del programa y probar dicha hipótesis, pero por ahora eso no es factible.
 
 # Visión futura
 
